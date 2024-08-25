@@ -6,7 +6,9 @@ import (
 	"os"
 
 	"github.com/Jake4-CX/portfolio-website-v2-backend/cmd/http/controllers"
+	middlewares "github.com/Jake4-CX/portfolio-website-v2-backend/cmd/http/middleware"
 	"github.com/Jake4-CX/portfolio-website-v2-backend/pkg/initializers"
+	"github.com/Jake4-CX/portfolio-website-v2-backend/pkg/structs"
 	"github.com/gin-gonic/gin"
 )
 
@@ -14,6 +16,7 @@ func main() {
 
 	initializers.LoadEnvVariables()
 	initializers.InitializeDB()
+	initializers.InitializeS3()
 
 	router := gin.Default()
 
@@ -23,6 +26,33 @@ func main() {
 	router.POST("/auth/login", controllers.LoginUser)
 	router.POST("/auth/validate", controllers.ValidateUserAccessToken)
 	router.POST("/auth/refresh", controllers.RefreshAccessToken)
+
+	// Technologies
+	router.GET("/technologies", controllers.GetTechnologies)
+	router.GET("/technologies/:technologyID", controllers.GetTechnology)
+
+	// Projects
+	router.GET("/projects", controllers.GetProjects)
+	router.GET("/projects/:projectID", controllers.GetProject)
+
+	authorized := router.Group("/")
+
+	authorized.Use(middlewares.RoleMiddleware(structs.ADMIN))
+	{
+		// Technologies
+		authorized.POST("/technologies", controllers.CreateTechnology)
+		authorized.PUT("/technologies/:technologyID", controllers.UpdateTechnology)
+		authorized.DELETE("/technologies/:technologyID", controllers.DeleteTechnology)
+
+		// Projects
+		authorized.POST("/projects", controllers.CreateProject)
+		authorized.PUT("/projects/:projectID", controllers.UpdateProject)
+		authorized.PUT("/projects/:projectID/images", controllers.AssignProjectImages)
+		authorized.DELETE("/projects/:projectID", controllers.DeleteProject)
+
+		// Storage
+		authorized.POST("/storage/create-presigned-url", controllers.CreatePresignedURL)
+	}
 
 	log.Fatal(router.Run("0.0.0.0:" + os.Getenv("REST_PORT")))
 

@@ -26,6 +26,8 @@ func InitializeDB() {
 		&structs.Projects{},
 		&structs.Technologies{},
 		&structs.ProjectTechnologies{},
+		&structs.ProjectImages{},
+		&structs.ProjectURLs{},
 	)
 
 	if err != nil {

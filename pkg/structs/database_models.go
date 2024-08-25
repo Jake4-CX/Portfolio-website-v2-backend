@@ -38,11 +38,28 @@ type VerificationTokens struct {
 
 type Projects struct {
 	GormModel
-	ProjectName        string    `json:"projectName"`
-	ProjectDescription string    `json:"projectDescription"`
-	IsFeatured         bool      `json:"isFeatured"`
-	StartDate          time.Time `json:"startDate"`
-	EndDate            time.Time `json:"endDate"`
+	ProjectName         string                `json:"projectName"`
+	ProjectDescription  string                `json:"projectDescription"`
+	IsFeatured          bool                  `json:"isFeatured"`
+	StartDate           time.Time             `json:"startDate"`
+	EndDate             time.Time             `json:"endDate"`
+	ProjectImages       []ProjectImages       `json:"projectImages" gorm:"foreignKey:ProjectId"`       // One-to-many relationship
+	ProjectTechnologies []ProjectTechnologies `json:"projectTechnologies" gorm:"foreignKey:ProjectId"` // One-to-many relationship
+	ProjectURLs         ProjectURLs           `json:"projectURLs" gorm:"foreignKey:ProjectId"`         // One-to-one relationship
+}
+
+type ProjectURLs struct {
+	GormModel
+	ProjectId  uint   `json:"projectId"`
+	GitHubURL  string `json:"githubURL"`
+	WebsiteURL string `json:"websiteURL"`
+	YouTubeURL string `json:"youtubeURL"`
+}
+
+type ProjectImages struct {
+	GormModel
+	ProjectId uint   `json:"projectId"`
+	ImageURL  string `json:"imageURL"`
 }
 
 type Technologies struct {
@@ -58,9 +75,15 @@ type ProjectTechnologies struct {
 	TechnologyId uint `json:"technologyId"`
 }
 
+type UploadCategory string
 type TechnologyType string
 type VerificationType string
 type UserRole string
+
+const (
+	PROJECT_IMAGE    UploadCategory = "PROJECT_IMAGE"
+	TECHNOLOGY_IMAGE UploadCategory = "TECHNOLOGY_IMAGE"
+)
 
 const (
 	LANGUAGE  TechnologyType = "LANGUAGE"

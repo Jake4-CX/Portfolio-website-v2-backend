@@ -13,7 +13,7 @@ import (
 func CreateUser(c *gin.Context) {
 
 	var newUser struct {
-		UserEmail string `json:"userEmail" binding:"required"`
+		UserEmail    string `json:"userEmail" binding:"required"`
 		UserPassword string `json:"userPassword" binding:"required"`
 	}
 
@@ -38,7 +38,7 @@ func CreateUser(c *gin.Context) {
 	}
 
 	user := structs.Users{
-		UserEmail: newUser.UserEmail,
+		UserEmail:    newUser.UserEmail,
 		UserPassword: string(hash),
 	}
 
@@ -54,9 +54,9 @@ func CreateUser(c *gin.Context) {
 }
 
 func LoginUser(c *gin.Context) {
-	
+
 	var login struct {
-		UserEmail string `json:"userEmail" binding:"required"`
+		UserEmail    string `json:"userEmail" binding:"required"`
 		UserPassword string `json:"userPassword" binding:"required"`
 	}
 
@@ -87,14 +87,9 @@ func LoginUser(c *gin.Context) {
 	}
 
 	// Save the refresh token in the database
-	refreshTokenRecord := structs.RefreshTokens{
-		UserId:       user.ID,
-		RefreshToken: refreshToken,
-		ExpiresAt:    time.Now().Add(time.Hour * 24 * 7),
-	}
+	err = utils.SaveRefreshToken(user.ID, refreshToken)
 
-	result = initializers.DB.Create(&refreshTokenRecord)
-	if result.Error != nil {
+	if err != nil {
 		c.JSON(500, gin.H{"error": "Error saving refresh token"})
 		return
 	}
@@ -121,7 +116,7 @@ func ValidateUserAccessToken(c *gin.Context) {
 
 	// Remove "Bearer " from the token string
 	tokenString = tokenString[len("Bearer "):]
-	
+
 	// Check if the access token is valid
 	userId, err := utils.ValidateToken(tokenString)
 
@@ -177,16 +172,24 @@ func RefreshAccessToken(c *gin.Context) {
 	}
 
 	// Generate new access token
-	accessToken, _, err := utils.GenerateToken(refreshTokenRecord.UserId)
+	accessToken, newRefreshToken, err := utils.GenerateToken(refreshTokenRecord.UserId)
 	if err != nil {
 		c.JSON(500, gin.H{"error": "Error generating access token"})
+		return
+	}
+
+	// Save the refresh token in the database
+	err = utils.SaveRefreshToken(refreshTokenRecord.UserId, newRefreshToken)
+
+	if err != nil {
+		c.JSON(500, gin.H{"error": "Error saving refresh token"})
 		return
 	}
 
 	var refreshResponse structs.TokensModel
 
 	refreshResponse.AccessToken = accessToken
-	refreshResponse.RefreshToken = refreshToken.RefreshToken
+	refreshResponse.RefreshToken = newRefreshToken
 
 	c.JSON(200, gin.H{"message": "Access token refreshed", "data": refreshResponse})
 

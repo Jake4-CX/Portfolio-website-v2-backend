@@ -3,6 +3,8 @@ package utils
 import (
 	"time"
 
+	"github.com/Jake4-CX/portfolio-website-v2-backend/pkg/initializers"
+	"github.com/Jake4-CX/portfolio-website-v2-backend/pkg/structs"
 	"github.com/golang-jwt/jwt/v5"
 )
 
@@ -60,4 +62,19 @@ func ValidateToken(tokenString string) (uint, error) {
 	}
 
 	return claims.UserID, nil
+}
+
+func SaveRefreshToken(userId uint, refreshToken string) error {
+	refreshTokenRecord := structs.RefreshTokens{
+		UserId:       userId,
+		RefreshToken: refreshToken,
+		ExpiresAt:    time.Now().Add(time.Hour * 24 * 7),
+	}
+
+	result := initializers.DB.Create(&refreshTokenRecord)
+	if result.Error != nil {
+		return result.Error
+	}
+
+	return nil
 }
