@@ -26,8 +26,8 @@ type GraphQLResponse struct {
 func GetCommitHistory(c *gin.Context) {
 	// GraphQL query
 	query := `
-		query ($userName: String!) {
-			user(userName: $userName) {
+		query ($login: String!) {
+			user(login: $login) {
 				contributionsCollection {
 					contributionYears
 					contributionCalendar {
@@ -57,7 +57,7 @@ func GetCommitHistory(c *gin.Context) {
 	requestPayload := GraphQLRequest{
 		Query: query,
 		Variables: map[string]interface{}{
-			"userName": userName,
+			"login": userName,
 		},
 	}
 
