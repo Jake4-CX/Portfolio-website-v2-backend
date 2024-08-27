@@ -35,6 +35,9 @@ func main() {
 	router.GET("/projects", controllers.GetProjects)
 	router.GET("/projects/:projectID", controllers.GetProject)
 
+	// GitHub
+	router.GET("/github/commits", controllers.GetCommitHistory)
+
 	authorized := router.Group("/")
 
 	authorized.Use(middlewares.RoleMiddleware(structs.ADMIN))
