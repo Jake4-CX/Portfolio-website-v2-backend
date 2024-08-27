@@ -38,6 +38,9 @@ func main() {
 	// GitHub
 	router.GET("/github/commits", controllers.GetCommitHistory)
 
+	// Contact
+	router.POST("/contact", controllers.ContactEmail)
+
 	authorized := router.Group("/")
 
 	authorized.Use(middlewares.RoleMiddleware(structs.ADMIN))
