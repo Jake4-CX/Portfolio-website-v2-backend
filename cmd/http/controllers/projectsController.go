@@ -15,7 +15,7 @@ func CreateProject(c *gin.Context) {
 	var newProject struct {
 		ProjectName         string `json:"projectName" binding:"required"`
 		ProjectDescription  string `json:"projectDescription" binding:"required"`
-		IsFeatured          bool   `json:"isFeatured" binding:"required"`
+		IsFeatured          bool   `json:"isFeatured"`
 		StartDate           int64  `json:"startDate" binding:"required"`
 		EndDate             int64  `json:"endDate" binding:"required"`
 		ProjectTechnologies []uint `json:"projectTechnologies" binding:"required"`
@@ -114,7 +114,7 @@ func UpdateProject(c *gin.Context) {
 	var updatedProject struct {
 		ProjectName         string `json:"projectName" binding:"required"`
 		ProjectDescription  string `json:"projectDescription" binding:"required"`
-		IsFeatured          bool   `json:"isFeatured" binding:"required"`
+		IsFeatured          bool   `json:"isFeatured"`
 		StartDate           int64  `json:"startDate" binding:"required"`
 		EndDate             int64  `json:"endDate" binding:"required"`
 		ProjectTechnologies []uint `json:"projectTechnologies" binding:"required"`
