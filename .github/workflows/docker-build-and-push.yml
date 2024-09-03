@@ -1,0 +1,49 @@
+name: Build and Push Docker Image
+
+on:
+  push:
+    branches:
+      - master
+      - main
+    tags:
+      - v*
+    paths-ignore: 
+      - 'README.md'
+      - 'LICENSE'
+      - 'deployments/**'
+      - 'docker-compose.yml'
+      - '.github/**'
+  workflow_dispatch:
+env:
+  DOCKER_USERNAME: jake4
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Out Repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Extract version from tag
+        id: get_version
+        uses: battila7/get-version-action@v2
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ env.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build and Push Docker Image (for portfolio-backend)
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: deployments/.dockerfile
+          push: true
+          tags: |
+            ${{ env.DOCKER_USERNAME }}/portfolio-backend:latest
+            ${{ env.DOCKER_USERNAME }}/portfolio-backend:${{ steps.get_version.outputs.version }}

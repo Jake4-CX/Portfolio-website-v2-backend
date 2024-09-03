@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  portfolio-backend:
+    build:
+      context: .
+      dockerfile: deployments/.dockerfile
+    image: jake4/portfolio-backend:latest
+    env_file: "/.env"
+    ports:
+      - "8080:8080" # REST API
+  portfolio-frontend:
+    image: jake4/portfolio-frontend:latest
+    env_file: "/.env"
+    ports:
+      - "3000:80" # React App
