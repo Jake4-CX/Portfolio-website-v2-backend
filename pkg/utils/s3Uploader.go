@@ -49,7 +49,7 @@ func UploadToS3(session *session.Session, filePath string) (string, error) {
 func GeneratePresignedPost(session *session.Session, category structs.UploadCategory) (string, error) {
 	svc := s3.New(session)
 	bucket := os.Getenv("BUCKET_NAME")
-	key := fmt.Sprintf("%s/%s/%d", os.Getenv("BUCKET_ENDPOINT_URI"), category, time.Now().Unix())
+	key := fmt.Sprintf("%s/%s/%d", os.Getenv("BUCKET_ENDPOINT_URI"), category, time.Now().UnixNano()/1e3)
 
 	req, _ := svc.PutObjectRequest(&s3.PutObjectInput{
 		Bucket: aws.String(bucket),
