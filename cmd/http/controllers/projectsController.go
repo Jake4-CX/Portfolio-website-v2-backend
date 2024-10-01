@@ -18,6 +18,7 @@ func CreateProject(c *gin.Context) {
 		IsFeatured          bool   `json:"isFeatured"`
 		StartDate           int64  `json:"startDate" binding:"required"`
 		EndDate             int64  `json:"endDate" binding:"required"`
+		IsEnabled           bool   `json:"isEnabled"`
 		ProjectTechnologies []uint `json:"projectTechnologies" binding:"required"`
 		ProjectURLs         struct {
 			GitHubURL  string `json:"githubURL"`
@@ -52,6 +53,7 @@ func CreateProject(c *gin.Context) {
 		IsFeatured:         newProject.IsFeatured,
 		StartDate:          startDate,
 		EndDate:            endDate,
+		IsEnabled:          newProject.IsEnabled,
 	}
 
 	// Save the project to get the ID
@@ -117,8 +119,9 @@ func UpdateProject(c *gin.Context) {
 		IsFeatured          bool   `json:"isFeatured"`
 		StartDate           int64  `json:"startDate" binding:"required"`
 		EndDate             int64  `json:"endDate" binding:"required"`
+		IsEnabled           bool   `json:"isEnabled"`
 		ProjectTechnologies []uint `json:"projectTechnologies" binding:"required"`
-		ProjectURLs                struct {
+		ProjectURLs         struct {
 			GitHubURL  string `json:"githubURL"`
 			WebsiteURL string `json:"websiteURL"`
 			YouTubeURL string `json:"youtubeURL"`
@@ -196,6 +199,7 @@ func UpdateProject(c *gin.Context) {
 	project.IsFeatured = updatedProject.IsFeatured
 	project.StartDate = startDate
 	project.EndDate = endDate
+	project.IsEnabled = updatedProject.IsEnabled
 
 	// Update ProjectURLs
 	projectURLs := structs.ProjectURLs{

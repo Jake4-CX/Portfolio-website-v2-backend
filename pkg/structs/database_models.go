@@ -43,6 +43,7 @@ type Projects struct {
 	IsFeatured          bool                  `json:"isFeatured"`
 	StartDate           time.Time             `json:"startDate"`
 	EndDate             time.Time             `json:"endDate"`
+	IsEnabled           bool                  `json:"isEnabled" gorm:"default:true"`
 	ProjectImages       []ProjectImages       `json:"projectImages" gorm:"foreignKey:ProjectId"`       // One-to-many relationship
 	ProjectTechnologies []ProjectTechnologies `json:"projectTechnologies" gorm:"foreignKey:ProjectId"` // One-to-many relationship
 	ProjectURLs         ProjectURLs           `json:"projectURLs" gorm:"foreignKey:ProjectId"`         // One-to-one relationship
